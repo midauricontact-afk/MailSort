@@ -9,7 +9,7 @@ import { allowSender, blockSender, estimate, neutralSender, trashSender, unsubsc
 import { Avatar } from '../components/Avatar';
 import { Sheet } from '../components/Sheet';
 import { IconMail, IconTrash, IconUnsub } from '../icons';
-import { openGmail, openMailInGmail } from '../openGmail';
+import { openGmail } from '../openGmail';
 import { useUI } from '../uiContext';
 
 /** Fiche d'un expéditeur : catégorie, statut, désinscription, nettoyage, derniers mails. */
@@ -49,8 +49,8 @@ export function SenderSheet({ groupKey, onClose }: { groupKey: string; onClose: 
   };
 
   const gmail = async () => {
-    const copied = await openGmail(senderSearchQuery(g));
-    if (copied) store.toast('Recherche copiée : colle-la dans la barre de recherche de Gmail', 'info');
+    const where = await openGmail(senderSearchQuery(g));
+    if (where === 'app') store.toast('Recherche copiée : colle-la dans la barre de recherche de Gmail', 'info');
   };
 
   return (
@@ -151,10 +151,10 @@ export function SenderSheet({ groupKey, onClose }: { groupKey: string; onClose: 
         </button>
       </div>
 
-      <h4 className="sheet-section">Derniers mails <span className="muted small">· touche pour ouvrir dans Gmail</span></h4>
+      <h4 className="sheet-section">Derniers mails</h4>
       <div className="list compact">
         {recent.map((m) => (
-          <button key={m.id} className="mail-row" onClick={() => openMailInGmail(m.threadId)}>
+          <div key={m.id} className="mail-row">
             <div className="ellipsis">
               {m.labelIds.includes('UNREAD') && <span className="dot" aria-label="non lu" />}
               {m.subject || '(sans objet)'}
@@ -162,7 +162,7 @@ export function SenderSheet({ groupKey, onClose }: { groupKey: string; onClose: 
             <span className="muted small nowrap">
               {formatDate(m.date)} · {formatBytes(m.size)}
             </span>
-          </button>
+          </div>
         ))}
       </div>
     </Sheet>
