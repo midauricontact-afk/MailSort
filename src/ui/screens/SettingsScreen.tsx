@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import { formatDate } from '../../core/format';
 import { store, useAppState, type Theme } from '../../state/store';
 import { openGmail } from '../openGmail';
 import { useUI } from '../uiContext';
+import { LinkTesterSheet } from './LinkTesterSheet';
 
 /** Onglet « Réglages ». */
 export function SettingsScreen() {
   const s = useAppState();
   const ui = useUI();
   const st = s.settings;
+  const [testLinks, setTestLinks] = useState(false);
 
   const signOut = async () => {
     const choice = await ui.ask({
@@ -43,7 +46,11 @@ export function SettingsScreen() {
         <button className="setting link" onClick={() => void openGmail()}>
           Ouvrir l’app Gmail
         </button>
+        <button className="setting link" onClick={() => setTestLinks(true)}>
+          Tester les liens Gmail
+        </button>
       </div>
+      {testLinks && <LinkTesterSheet onClose={() => setTestLinks(false)} />}
 
       <div className="group-title">Tri</div>
       <div className="card settings">
